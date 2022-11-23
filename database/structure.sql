@@ -240,20 +240,20 @@ ALTER TABLE instrument ADD CONSTRAINT FK_instrument_0 FOREIGN KEY (instrument_ty
 ALTER TABLE instrument ADD CONSTRAINT FK_instrument_1 FOREIGN KEY (instrument_brand_id) REFERENCES instrument_brand (instrument_brand_id) ON DELETE SET NULL;
 
 
-ALTER TABLE price_list ADD CONSTRAINT FK_price_list_0 FOREIGN KEY (price_type_id) REFERENCES price_type (price_type_id);
-ALTER TABLE price_list ADD CONSTRAINT FK_price_list_1 FOREIGN KEY (lesson_type_id) REFERENCES lesson_type (lesson_type_id);
+ALTER TABLE price_list ADD CONSTRAINT FK_price_list_0 FOREIGN KEY (price_type_id) REFERENCES price_type (price_type_id) ON DELETE NO ACTION;
+ALTER TABLE price_list ADD CONSTRAINT FK_price_list_1 FOREIGN KEY (lesson_type_id) REFERENCES lesson_type (lesson_type_id) ON DELETE NO ACTION;
 
 
 ALTER TABLE rental ADD CONSTRAINT FK_rental_0 FOREIGN KEY (student_id) REFERENCES student (student_id) ON DELETE CASCADE;
-ALTER TABLE rental ADD CONSTRAINT FK_rental_1 FOREIGN KEY (instrument_id) REFERENCES instrument (instrument_id);
+ALTER TABLE rental ADD CONSTRAINT FK_rental_1 FOREIGN KEY (instrument_id) REFERENCES instrument (instrument_id) ON DELETE NO ACTION;
 
 
 ALTER TABLE sibling ADD CONSTRAINT FK_sibling_0 FOREIGN KEY (student_id) REFERENCES student (student_id) ON DELETE CASCADE;
 ALTER TABLE sibling ADD CONSTRAINT FK_sibling_1 FOREIGN KEY (sibling_id) REFERENCES student (student_id) ON DELETE CASCADE;
 
 
-ALTER TABLE timeslot ADD CONSTRAINT FK_timeslot_0 FOREIGN KEY (price_id) REFERENCES price_list (price_id);
-ALTER TABLE timeslot ADD CONSTRAINT FK_timeslot_1 FOREIGN KEY (instructor_id) REFERENCES instructor (instructor_id);
+ALTER TABLE timeslot ADD CONSTRAINT FK_timeslot_0 FOREIGN KEY (price_id) REFERENCES price_list (price_id) ON DELETE NO ACTION;
+ALTER TABLE timeslot ADD CONSTRAINT FK_timeslot_1 FOREIGN KEY (instructor_id) REFERENCES instructor (instructor_id) ON DELETE NO ACTION;
 
 
 ALTER TABLE booked_students ADD CONSTRAINT FK_booked_students_0 FOREIGN KEY (timeslot_id) REFERENCES timeslot (timeslot_id) ON DELETE CASCADE;
@@ -265,12 +265,11 @@ ALTER TABLE ensemble ADD CONSTRAINT FK_ensemble_1 FOREIGN KEY (genre_id) REFEREN
 
 
 ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_0 FOREIGN KEY (timeslot_id) REFERENCES timeslot (timeslot_id) ON DELETE CASCADE;
-ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_1 FOREIGN KEY (lesson_skill_level_id) REFERENCES lesson_skill_level (lesson_skill_level_id);
+ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_1 FOREIGN KEY (lesson_skill_level_id) REFERENCES lesson_skill_level (lesson_skill_level_id) ON DELETE NO ACTION;
 ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_2 FOREIGN KEY (lesson_instrument_id) REFERENCES lesson_instrument (lesson_instrument_id) ON DELETE SET NULL;
 
 
 ALTER TABLE lesson ADD CONSTRAINT FK_lesson_0 FOREIGN KEY (timeslot_id) REFERENCES timeslot (timeslot_id) ON DELETE CASCADE;
-ALTER TABLE lesson ADD CONSTRAINT FK_lesson_1 FOREIGN KEY (lesson_skill_level_id) REFERENCES lesson_skill_level (lesson_skill_level_id);
+ALTER TABLE lesson ADD CONSTRAINT FK_lesson_1 FOREIGN KEY (lesson_skill_level_id) REFERENCES lesson_skill_level (lesson_skill_level_id) ON DELETE NO ACTION;
 ALTER TABLE lesson ADD CONSTRAINT FK_lesson_2 FOREIGN KEY (lesson_instrument_id) REFERENCES lesson_instrument (lesson_instrument_id) ON DELETE SET NULL;
-
 
