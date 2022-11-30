@@ -56,3 +56,11 @@ SELECT price_id FROM price_list
 WHERE price_type_id=(SELECT price_type_id FROM price_type WHERE skill_level ILIKE 'beginner')
 AND lesson_type_id=(SELECT lesson_type_id FROM lesson_type WHERE type ILIKE 'lesson');
 
+--Find all bookings for each student
+SELECT s.first_name, s.last_name, t.date, t.time, p.price, l.type
+FROM student AS s
+NATURAL JOIN booked_students
+NATURAL JOIN timeslot AS t
+NATURAL JOIN price_list AS p
+NATURAL JOIN lesson_type AS l
+ORDER BY s.first_name;
