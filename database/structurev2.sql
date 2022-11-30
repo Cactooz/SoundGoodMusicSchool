@@ -92,7 +92,7 @@ ALTER TABLE contact_person ADD CONSTRAINT PK_contact_person PRIMARY KEY (contact
 
 CREATE TABLE instructor (
  instructor_id INT NOT NULL,
- enemble BIT(1) NOT NULL
+ ensemble BIT(1) NOT NULL
 );
 
 ALTER TABLE instructor ADD CONSTRAINT PK_instructor PRIMARY KEY (instructor_id);
