@@ -140,7 +140,8 @@ ALTER TABLE teaches_instrument ADD CONSTRAINT PK_teaches_instrument PRIMARY KEY 
 CREATE TABLE timeslot (
  timeslot_id SERIAL NOT NULL,
  date DATE NOT NULL,
- time TIME(4) NOT NULL,
+ start_time TIME(4) NOT NULL,
+ end_time TIME(4) NOT NULL,
  instructor_id INT NOT NULL
 );
 
@@ -159,12 +160,12 @@ CREATE TABLE ensemble (
 ALTER TABLE ensemble ADD CONSTRAINT PK_ensemble PRIMARY KEY (ensemble_id);
 
 
-CREATE TABLE ensemble_students (
+CREATE TABLE ensemble_student (
  student_id INT NOT NULL,
  ensemble_id SERIAL NOT NULL
 );
 
-ALTER TABLE ensemble_students ADD CONSTRAINT PK_ensemble_students PRIMARY KEY (student_id,ensemble_id);
+ALTER TABLE ensemble_student ADD CONSTRAINT PK_ensemble_student PRIMARY KEY (student_id,ensemble_id);
 
 
 CREATE TABLE group_lesson (
@@ -180,12 +181,12 @@ CREATE TABLE group_lesson (
 ALTER TABLE group_lesson ADD CONSTRAINT PK_group_lesson PRIMARY KEY (group_lesson_id);
 
 
-CREATE TABLE group_lesson_students (
+CREATE TABLE group_lesson_student (
  student_id INT NOT NULL,
  group_lesson_id SERIAL NOT NULL
 );
 
-ALTER TABLE group_lesson_students ADD CONSTRAINT PK_group_lesson_students PRIMARY KEY (student_id,group_lesson_id);
+ALTER TABLE group_lesson_student ADD CONSTRAINT PK_group_lesson_student PRIMARY KEY (student_id,group_lesson_id);
 
 
 CREATE TABLE individual_lesson (
@@ -243,8 +244,8 @@ ALTER TABLE ensemble ADD CONSTRAINT FK_ensemble_1 FOREIGN KEY (timeslot_id) REFE
 ALTER TABLE ensemble ADD CONSTRAINT FK_ensemble_2 FOREIGN KEY (price_list_id) REFERENCES price_list (price_list_id);
 
 
-ALTER TABLE ensemble_students ADD CONSTRAINT FK_ensemble_students_0 FOREIGN KEY (student_id) REFERENCES student (student_id);
-ALTER TABLE ensemble_students ADD CONSTRAINT FK_ensemble_students_1 FOREIGN KEY (ensemble_id) REFERENCES ensemble (ensemble_id);
+ALTER TABLE ensemble_student ADD CONSTRAINT FK_ensemble_student_0 FOREIGN KEY (student_id) REFERENCES student (student_id);
+ALTER TABLE ensemble_student ADD CONSTRAINT FK_ensemble_student_1 FOREIGN KEY (ensemble_id) REFERENCES ensemble (ensemble_id);
 
 
 ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_0 FOREIGN KEY (timeslot_id) REFERENCES timeslot (timeslot_id);
@@ -253,8 +254,8 @@ ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_2 FOREIGN KEY (skill_lev
 ALTER TABLE group_lesson ADD CONSTRAINT FK_group_lesson_3 FOREIGN KEY (price_list_id) REFERENCES price_list (price_list_id);
 
 
-ALTER TABLE group_lesson_students ADD CONSTRAINT FK_group_lesson_students_0 FOREIGN KEY (student_id) REFERENCES student (student_id);
-ALTER TABLE group_lesson_students ADD CONSTRAINT FK_group_lesson_students_1 FOREIGN KEY (group_lesson_id) REFERENCES group_lesson (group_lesson_id);
+ALTER TABLE group_lesson_student ADD CONSTRAINT FK_group_lesson_student_0 FOREIGN KEY (student_id) REFERENCES student (student_id);
+ALTER TABLE group_lesson_student ADD CONSTRAINT FK_group_lesson_student_1 FOREIGN KEY (group_lesson_id) REFERENCES group_lesson (group_lesson_id);
 
 
 ALTER TABLE individual_lesson ADD CONSTRAINT FK_individual_lesson_0 FOREIGN KEY (student_id) REFERENCES student (student_id);
