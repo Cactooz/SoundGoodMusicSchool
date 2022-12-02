@@ -13,3 +13,6 @@ CREATE DATABASE sgms;
 
 --Insert data
 \i 'C:\\PATH\\database\\data.sql'
+
+--Insert views
+\i 'C:\\PATH\\database\\views.sql'
