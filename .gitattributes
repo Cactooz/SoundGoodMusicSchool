@@ -1,0 +1,3 @@
+#Detect SQL files for language stats
+*.sql linguist-detectable=true
+*.sql linguist-language=sql
