@@ -1,0 +1,114 @@
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+NUMBER OF LESSONS PER MONTH
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ GroupAggregate  (cost=4.46..94.73 rows=68 width=96) (actual time=0.193..0.235 rows=12 loops=1)
+   Group Key: (EXTRACT(month FROM timeslot.date)), (EXTRACT(year FROM timeslot.date))
+   ->  Sort  (cost=4.46..4.65 rows=75 width=68) (actual time=0.113..0.116 rows=75 loops=1)
+         Sort Key: (EXTRACT(month FROM timeslot.date)), (EXTRACT(year FROM timeslot.date))
+         Sort Method: quicksort  Memory: 29kB
+         ->  Seq Scan on timeslot  (cost=0.00..2.13 rows=75 width=68) (actual time=0.018..0.060 rows=75 loops=1)
+   SubPlan 1
+     ->  Seq Scan on individual_lesson  (cost=0.00..25.70 rows=1570 width=4) (actual time=0.006..0.008 rows=25 loops=1)
+   SubPlan 2
+     ->  Seq Scan on group_lesson  (cost=0.00..24.50 rows=1450 width=4) (actual time=0.004..0.005 rows=25 loops=1)
+   SubPlan 3
+     ->  Seq Scan on ensemble  (cost=0.00..25.70 rows=1570 width=4) (actual time=0.003..0.005 rows=25 loops=1)
+ Planning Time: 0.254 ms
+ Execution Time: 0.305 ms
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+AMOUNT OF SIBLINGS
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=114.47..114.97 rows=201 width=16) (actual time=0.149..0.151 rows=4 loops=1)
+   Sort Key: (sum(CASE WHEN (hashed SubPlan 1) THEN 1 ELSE 0 END))
+   Sort Method: quicksort  Memory: 25kB
+   ->  HashAggregate  (cost=104.77..106.78 rows=201 width=16) (actual time=0.143..0.145 rows=4 loops=1)
+         Group Key: (count(*)), (sum(CASE WHEN (hashed SubPlan 1) THEN 1 ELSE 0 END))
+         Batches: 1  Memory Usage: 40kB
+         ->  Append  (cost=57.43..103.77 rows=201 width=16) (actual time=0.072..0.143 rows=4 loops=1)
+               ->  HashAggregate  (cost=57.43..59.43 rows=200 width=16) (actual time=0.070..0.071 rows=3 loops=1)
+                     Group Key: sum(CASE WHEN (hashed SubPlan 1) THEN 1 ELSE 0 END)
+                     Batches: 1  Memory Usage: 40kB
+                     ->  HashAggregate  (cost=52.43..54.43 rows=200 width=12) (actual time=0.062..0.066 rows=27 loops=1)
+                           Group Key: sibling.student_id
+                           Batches: 1  Memory Usage: 40kB
+                           ->  Seq Scan on sibling  (cost=0.00..32.60 rows=2260 width=4) (actual time=0.008..0.010 rows=44 loops=1)
+                           SubPlan 1
+                             ->  Seq Scan on student student_1  (cost=0.00..2.50 rows=150 width=4) (actual time=0.005..0.014 rows=150 loops=1)
+               ->  Subquery Scan on "*SELECT* 2"  (cost=41.31..41.34 rows=1 width=16) (actual time=0.069..0.069 rows=1 loops=1)
+                     ->  Aggregate  (cost=41.31..41.32 rows=1 width=12) (actual time=0.068..0.069 rows=1 loops=1)
+                           ->  Seq Scan on student  (cost=38.25..41.13 rows=75 width=0) (actual time=0.046..0.064 rows=123 loops=1)
+                                 Filter: (NOT (hashed SubPlan 2))
+                                 Rows Removed by Filter: 27
+                                 SubPlan 2
+                                   ->  Seq Scan on sibling sibling_1  (cost=0.00..32.60 rows=2260 width=4) (actual time=0.003..0.006 rows=44 loops=1)
+ Planning Time: 1.363 ms
+ Execution Time: 0.211 ms
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+AMOUNT OF INSTRUCTORS LESSONS FOR THE CURRENT MONTH
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=29.75..29.85 rows=38 width=34) (actual time=0.206..0.207 rows=1 loops=1)
+   Sort Key: (count(ts.timeslot_id)) DESC
+   Sort Method: quicksort  Memory: 25kB
+   ->  HashAggregate  (cost=28.38..28.75 rows=38 width=34) (actual time=0.189..0.190 rows=1 loops=1)
+         Group Key: p.personal_number, p.first_name, p.last_name
+         Batches: 1  Memory Usage: 24kB
+         ->  Nested Loop  (cost=3.88..28.00 rows=38 width=30) (actual time=0.162..0.182 rows=1 loops=1)
+               Join Filter: (ts.instructor_id = i.instructor_id)
+               ->  Hash Join  (cost=3.73..14.98 rows=38 width=38) (actual time=0.091..0.111 rows=1 loops=1)
+                     Hash Cond: (p.person_id = ts.instructor_id)
+                     ->  Seq Scan on person p  (cost=0.00..9.00 rows=300 width=30) (actual time=0.010..0.028 rows=300 loops=1)
+                     ->  Hash  (cost=3.25..3.25 rows=38 width=8) (actual time=0.056..0.057 rows=1 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 9kB
+                           ->  Seq Scan on timeslot ts  (cost=0.00..3.25 rows=38 width=8) (actual time=0.048..0.054 rows=1 loops=1)
+                                 Filter: (SubPlan 1)
+                                 Rows Removed by Filter: 74
+                                 SubPlan 1
+                                   ->  Result  (cost=0.00..0.02 rows=1 width=1) (actual time=0.000..0.000 rows=1 loops=75)
+               ->  Index Only Scan using pk_instructor on instructor i  (cost=0.15..0.33 rows=1 width=4) (actual time=0.070..0.070 rows=1 loops=1)
+                     Index Cond: (instructor_id = p.person_id)
+                     Heap Fetches: 1
+ Planning Time: 2.338 ms
+ Execution Time: 0.256 ms
+ 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ALL ENSEMBLES NEXT WEEK
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
+ Sort  (cost=57.93..58.09 rows=64 width=322) (actual time=0.093..0.095 rows=0 loops=1)
+   Sort Key: (EXTRACT(dow FROM ts.date)), g.genre
+   Sort Method: quicksort  Memory: 25kB
+   ->  HashAggregate  (cost=51.37..56.01 rows=64 width=322) (actual time=0.087..0.088 rows=0 loops=1)
+         Group Key: ts.date, g.genre, e.max_students
+         Batches: 1  Memory Usage: 24kB
+         ->  Nested Loop  (cost=4.22..36.35 rows=64 width=230) (actual time=0.086..0.087 rows=0 loops=1)
+               ->  Hash Join  (cost=4.08..23.84 rows=64 width=16) (actual time=0.085..0.086 rows=0 loops=1)
+                     Hash Cond: (e.timeslot_id = ts.timeslot_id)
+                     ->  Nested Loop  (cost=0.16..19.58 rows=127 width=16) (actual time=0.021..0.021 rows=1 loops=1)
+                           ->  Seq Scan on ensemble_student es  (cost=0.00..2.27 rows=127 width=8) (actual time=0.009..0.009 rows=1 loops=1)
+                           ->  Memoize  (cost=0.16..0.56 rows=1 width=16) (actual time=0.010..0.010 rows=1 loops=1)
+                                 Cache Key: es.ensemble_id
+                                 Cache Mode: logical
+                                 Hits: 0  Misses: 1  Evictions: 0  Overflows: 0  Memory Usage: 1kB
+                                 ->  Index Scan using pk_ensemble on ensemble e  (cost=0.15..0.55 rows=1 width=16) (actual time=0.006..0.006 rows=1 loops=1)
+                                       Index Cond: (ensemble_id = es.ensemble_id)
+                     ->  Hash  (cost=3.44..3.44 rows=38 width=8) (actual time=0.059..0.060 rows=0 loops=1)
+                           Buckets: 1024  Batches: 1  Memory Usage: 8kB
+                           ->  Seq Scan on timeslot ts  (cost=0.00..3.44 rows=38 width=8) (actual time=0.059..0.059 rows=0 loops=1)
+                                 Filter: (SubPlan 6)
+                                 SubPlan 6
+               ->  Index Scan using pk_genre on genre g  (cost=0.15..0.20 rows=1 width=222) (never executed)
+                     Index Cond: (genre_id = e.genre_id)
+         SubPlan 1
+           ->  Seq Scan on ensemble_student  (cost=0.00..2.27 rows=127 width=4) (never executed)
+         SubPlan 2
+           ->  Seq Scan on ensemble_student ensemble_student_1  (cost=0.00..2.27 rows=127 width=4) (never executed)
+         SubPlan 3
+           ->  Seq Scan on ensemble_student ensemble_student_2  (cost=0.00..2.27 rows=127 width=4) (never executed)
+         SubPlan 4
+           ->  Seq Scan on ensemble_student ensemble_student_3  (cost=0.00..2.27 rows=127 width=4) (never executed)
+         SubPlan 5
+           ->  Seq Scan on ensemble_student ensemble_student_4  (cost=0.00..2.27 rows=127 width=4) (never executed)
+ Planning Time: 2.518 ms
+ Execution Time: 0.232 ms
+-------------------------------------------------------------------------------------------------------------------------------------------------------------
