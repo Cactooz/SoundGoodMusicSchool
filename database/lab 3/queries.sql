@@ -30,6 +30,15 @@ FROM student WHERE student_id
 NOT IN (SELECT student_id from sibling)
 ORDER BY siblings;
 
+--Get amount of siblings with 0 v2
+SELECT COUNT(*) AS students, siblings
+FROM (SELECT COUNT(sibling_id) AS siblings FROM sibling GROUP BY student_id) AS x
+GROUP BY siblings
+UNION SELECT COUNT(*), 0
+FROM student WHERE student_id
+NOT IN (SELECT student_id from sibling)
+ORDER BY siblings;
+
 --Get total lessons per instructor
 SELECT p.personal_number, p.first_name, p.last_name, COUNT(timeslot_id) AS lessons
 FROM timeslot AS ts
