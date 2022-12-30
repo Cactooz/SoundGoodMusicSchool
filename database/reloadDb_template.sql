@@ -16,3 +16,16 @@ CREATE DATABASE sgms;
 
 --Insert views
 \i 'C:\\PATH\\database\\views.sql'
+
+--Remove the old history database
+DROP DATABASE IF EXISTS sgmsh;
+
+--Create a new history database
+CREATE DATABASE sgmsh;
+
+\c sgmsh
+--Create database structure
+\i 'C:\\PATH\\database\\historical.sql'
+
+--Copy data
+\i 'C:\\PATH\\database\\copydata.sql'
