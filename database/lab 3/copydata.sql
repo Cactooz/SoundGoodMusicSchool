@@ -8,34 +8,23 @@ AS COPY (student_id INT, personal_number VARCHAR(12), first_name VARCHAR(100), l
 phone VARCHAR(15), email VARCHAR(100), street VARCHAR(100), house INT, city VARCHAR(100), zip VARCHAR(10))
 ON CONFLICT (student_id) DO NOTHING;
 
---Copy individual lesson data
+--Copy lesson data
 INSERT INTO lesson(lesson_id, date, start_time, end_time, lesson_type, price)
 SELECT lesson_id, date, start_time, end_time, lesson_type, price
 FROM dblink('dbname=sgms user=postgres password=pass',
-'SELECT timeslot_id AS lesson_id, date, start_time, end_time, ''individual'' AS lesson_type, price
-FROM individual_lesson NATURAL JOIN timeslot NATURAL JOIN price_list;')
+'SELECT lesson_id, date, start_time, end_time, lesson_type, price FROM
+(SELECT timeslot_id AS lesson_id, ''individual'' AS lesson_type, price_list_id FROM individual_lesson
+UNION
+SELECT timeslot_id AS lesson_id, ''group'' AS lesson_type, price_list_id FROM group_lesson
+UNION 
+SELECT timeslot_id AS lesson_id, ''ensemble'' AS lesson_type, price_list_id FROM ensemble) AS l
+INNER JOIN timeslot ON l.lesson_id=timeslot_id
+INNER JOIN price_list AS p ON l.price_list_id=p.price_list_id
+ORDER BY lesson_id')
 AS COPY (lesson_id INT, date DATE, start_time TIME(4), end_time TIME(4), lesson_type VARCHAR(100), price INT)
 ON CONFLICT (lesson_id) DO NOTHING;
 
---Copy group lesson data
-INSERT INTO lesson(lesson_id, date, start_time, end_time, lesson_type, price)
-SELECT lesson_id, date, start_time, end_time, lesson_type, price
-FROM dblink('dbname=sgms user=postgres password=pass',
-'SELECT timeslot_id AS lesson_id, date, start_time, end_time, ''group'' AS lesson_type, price
-FROM group_lesson NATURAL JOIN timeslot NATURAL JOIN price_list;')
-AS COPY (lesson_id INT, date DATE, start_time TIME(4), end_time TIME(4), lesson_type VARCHAR(100), price INT)
-ON CONFLICT (lesson_id) DO NOTHING;
-
---Copy ensemble data
-INSERT INTO lesson(lesson_id, date, start_time, end_time, lesson_type, price)
-SELECT lesson_id, date, start_time, end_time, lesson_type, price
-FROM dblink('dbname=sgms user=postgres password=pass',
-'SELECT timeslot_id AS lesson_id, date, start_time, end_time, ''ensemble'' AS lesson_type, price
-FROM ensemble NATURAL JOIN timeslot NATURAL JOIN price_list;')
-AS COPY (lesson_id INT, date DATE, start_time TIME(4), end_time TIME(4), lesson_type VARCHAR(100), price INT)
-ON CONFLICT (lesson_id) DO NOTHING;
-
---Copy group lesson and ensemble students data
+--Copy lesson students data
 INSERT INTO booked_students(lesson_id, student_id)
 SELECT lesson_id, student_id
 FROM dblink('dbname=sgms user=postgres password=pass',
