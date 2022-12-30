@@ -1,5 +1,5 @@
 CREATE TABLE student (
- student_id SERIAL NOT NULL,
+ student_id INT NOT NULL,
  personal_number VARCHAR(12) UNIQUE NOT NULL,
  first_name VARCHAR(100) NOT NULL,
  last_name VARCHAR(100),
@@ -15,7 +15,7 @@ ALTER TABLE student ADD CONSTRAINT PK_student PRIMARY KEY (student_id);
 
 
 CREATE TABLE timeslot (
- timeslot_id SERIAL NOT NULL,
+ timeslot_id INT NOT NULL,
  date DATE NOT NULL,
  start_time TIME(4) NOT NULL,
  end_time TIME(4) NOT NULL
@@ -25,7 +25,7 @@ ALTER TABLE timeslot ADD CONSTRAINT PK_timeslot PRIMARY KEY (timeslot_id);
 
 
 CREATE TABLE lesson (
- lesson_id SERIAL NOT NULL,
+ lesson_id INT NOT NULL,
  lesson_type VARCHAR(100) NOT NULL,
  price INT NOT NULL,
  timeslot_id INT NOT NULL
