@@ -48,3 +48,4 @@ ALTER TABLE lesson ADD CONSTRAINT FK_lesson_0 FOREIGN KEY (timeslot_id) REFERENC
 ALTER TABLE booked_students ADD CONSTRAINT FK_booked_students_0 FOREIGN KEY (lesson_id) REFERENCES lesson (lesson_id);
 ALTER TABLE booked_students ADD CONSTRAINT FK_booked_students_1 FOREIGN KEY (student_id) REFERENCES student (student_id);
 
+CREATE extension dblink;
