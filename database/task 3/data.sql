@@ -1162,3 +1162,9 @@ INSERT INTO ensemble_student (ensemble_id,student_id) VALUES
 (15,39),
 (16,109),
 (3,29);
+
+INSERT INTO rental (start_date, end_date, student_id, physical_instrument_id) VALUES
+('2022-06-16', '2023-06-16', 3, 8),
+('2022-08-30', '2022-12-28', 124, 23),
+('2022-10-12', '2023-10-12', 87, 13),
+('2022-10-06', '2023-10-06', 45, 21);
